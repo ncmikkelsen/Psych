@@ -32,7 +32,8 @@ OscMessage myMessage;
 //end OSC config
 
 void setup() {
-  size(640, 480);
+  //P3D required for syphon to work
+  size(640, 480, P3D);
   String[] cameras = Capture.list();
   video = new Capture(this, 640/2, 480/2);
   opencv = new OpenCV(this, 640/2, 480/2);
@@ -83,7 +84,6 @@ void draw() {
       println("small");
     }
   }
-  image(video, 0, 0 );
   server.sendImage(video);
 }
 
@@ -98,5 +98,8 @@ void OscSend(int v){
   oscP5.send(myBundle, myRemoteLocation);
   myMessage.clear(); 
   myBundle.clear();
+  print("sending: ");
+  println(myMessage);
+  println("done sending");
 }
 
