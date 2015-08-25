@@ -5,6 +5,10 @@ import java.awt.*;
 Capture video;
 OpenCV opencv;
 
+//syphon library
+import codeanticode.syphon.*;
+SyphonServer server;
+
 // start OSC config
 import oscP5.*;
 import netP5.*;
@@ -28,9 +32,10 @@ OscMessage myMessage;
 //end OSC config
 
 void setup() {
-  size(640, 480);
+  //P3D required for syphon to work
+  size(640, 480, P3D);
   String[] cameras = Capture.list();
-  video = new Capture(this, cameras[9]);
+  video = new Capture(this, 640/2, 480/2);
   opencv = new OpenCV(this, 640/2, 480/2);
   opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
 
@@ -40,6 +45,9 @@ void setup() {
   myRemoteLocation = new NetAddress(ipAddressToSendTo, portToSendTo);  
   myBundle = new OscBundle();
   myMessage = new OscMessage("/"); 
+  
+  // Create syhpon server to send frames out.
+  server = new SyphonServer(this, "Processing Syphon");
 }
 
 void draw() {
@@ -75,8 +83,8 @@ void draw() {
       OscSend(0);
       println("small");
     }
-    
   }
+  server.sendImage(video);
 }
 
 void captureEvent(Capture c) {
@@ -90,5 +98,8 @@ void OscSend(int v){
   oscP5.send(myBundle, myRemoteLocation);
   myMessage.clear(); 
   myBundle.clear();
+  print("sending: ");
+  println(myMessage);
+  println("done sending");
 }
 
