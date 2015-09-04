@@ -103,3 +103,30 @@ void OscSend(int v){
   println("done sending");
 }
 
+//0 = backwards, 1 = forwards
+void playDirection(int dir){
+  myMessage.setAddrPattern("/activeclip/video/position/direction");
+  myMessage.add(dir);
+  myBundle.add(myMessage);
+  oscP5.send(myBundle, myRemoteLocation);
+  myMessage.clear(); 
+  myBundle.clear();
+  print("sending: ");
+  println(myMessage);
+  println("done sending");
+}
+
+
+void pickClip(int layer, int clip){
+  println("Start pickClip");
+  myMessage.setAddrPattern("/layer" + layer + "/clip" + clip + "/connect");
+  myMessage.add(1);
+  myBundle.add(myMessage);
+  oscP5.send(myBundle, myRemoteLocation);
+  myMessage.clear(); 
+  myBundle.clear();
+  print("sending: ");
+  println(myMessage);
+  println("Done pickClip");
+}
+
