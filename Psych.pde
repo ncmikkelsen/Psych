@@ -4,6 +4,7 @@ import java.awt.*;
 
 Capture video;
 OpenCV opencv;
+PImage test;
 
 //syphon library
 import codeanticode.syphon.*;
@@ -37,22 +38,29 @@ Formatted like this:
 {box1 x, box1 y, box1 width, box1 height},
 {box2 x, box2 y, box2 width, box2 height}...
 */
-int[][] boxes = {    {10,  10,  50,  50},
-                     {20,  20,  40,  40},
-                     {15,  15,  80,  80},
-                     {25,  25,  70,  70}
+int[][] boxes = {    {15,  40,  60,  70},
+                     {90,  60,  60,  70},
+                     {160,  70,  60,  70},
+                     {230,  40,  60,  70}
                  };
 
 int[] activated = {0, 0, 0, 0};
+Rectangle[] faces;
 
 void setup() {
   //P3D required for syphon to work
-  size(640, 480, P3D);
+  size(320, 240, P3D);
   String[] cameras = Capture.list();
-  video = new Capture(this, 640/2, 480/2);
+  video = new Capture(this, cameras[0]);
   opencv = new OpenCV(this, 640/2, 480/2);
-  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
-
+  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
+  
+  test = createImage(320, 240, ARGB);
+  
+  for (int i = 0; i < cameras.length; i++) {
+      println(cameras[i]);
+    }
+  
   video.start();
   
   oscP5 = new OscP5(this,portToListenTo);
@@ -65,13 +73,16 @@ void setup() {
 }
 
 void draw() {
-  scale(2);
-  opencv.loadImage(video);
-  image(video, 0, 0 );
-
-  
-  updateBoxStates();
-  sendBoxStates();
+  int delayTime = millis() % 1000;
+//  if(delayTime > 450 && delayTime < 550){
+    test.copy(video, 0, 0, video.width, video.height, 0, 0, test.width, test.height);
+    opencv.loadImage(test);
+    image(test, 0, 0);
+    faces = opencv.detect();
+    drawBoxes();
+    updateBoxStates();
+    sendBoxStates();
+//  }
 
   server.sendImage(video);
 }
@@ -105,6 +116,22 @@ void playDirection(int dir){
   println("done sending");
 }
 
+void drawBoxes(){
+  noFill();
+  strokeWeight(3);
+
+
+  for (int i = 0; i < activated.length; i++) {
+    if(activated[i] == 1){
+      stroke(0, 255, 0);
+    } else{
+      stroke(255, 0, 0);
+    }
+    rect(boxes[i][0], boxes[i][1], boxes[i][2], boxes[i][3]);
+  }
+  
+}
+
 
 void pickClip(int layer, int clip){
   println("Start pickClip");
@@ -120,7 +147,9 @@ void pickClip(int layer, int clip){
 }
 
 void updateBoxStates(){
-  activated = {0, 0, 0, 0};
+  for(int i = 0; i<activated.length;i++){
+    activated[i] = 0;
+  }
   for(int i = 0; i < faces.length; i++){
     int[] nose = findNose(i);
     checkBoxes(nose);
@@ -159,27 +188,4 @@ void sendBoxStates(){
   }
 }
 
-void drawBoxes(){
-  noFill();
-  stroke(0, 255, 0);
-  strokeWeight(3);
-  Rectangle[] faces = opencv.detect();
-  println(faces.length);
-
-  for (int i = 0; i < faces.length; i++) {
-    println(faces[i].x + "," + faces[i].y);
-    rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height);
-  }
-  
-  if(faces.length > 0){
-    int nosex = faces[0].x + faces[0].width/2;
-    int nosey = faces[0].y + faces[0].height/2;
-    
-    fill(255, 0, 0);
-    noStroke();
-    rect(nosex, nosey, 4, 4);
-    rect(width/4, height/4, 4, 4);
-    
-  }
-}
 
