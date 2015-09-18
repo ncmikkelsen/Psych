@@ -43,7 +43,7 @@ int[][] boxes = {    {15,  40,  60,  70},
                      {160,  70,  60,  70},
                      {230,  40,  60,  70}
                  };
-
+int[] lastState = {0, 0, 0, 0}
 int[] activated = {0, 0, 0, 0};
 Rectangle[] faces;
 
@@ -148,6 +148,7 @@ void pickClip(int layer, int clip){
 
 void updateBoxStates(){
   for(int i = 0; i<activated.length;i++){
+    lastState[i] = activated[i];
     activated[i] = 0;
   }
   for(int i = 0; i < faces.length; i++){
@@ -183,8 +184,10 @@ void checkBoxes(int[] nose){
 void sendBoxStates(){
   for(int i = 0; i < activated.length; i++){
     //adding 1 so the array index matches the chosen layer which start from layer 2
-    pickClip(i+2, 1);
-    playDirection(activated[i]);
+    if(lastState[i] != activated[i]){
+      pickClip(i+2, 1);
+      playDirection(activated[i]);
+    }
   }
 }
 
