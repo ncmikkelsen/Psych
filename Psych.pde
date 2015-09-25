@@ -38,10 +38,10 @@ Formatted like this:
 {box1 x, box1 y, box1 width, box1 height},
 {box2 x, box2 y, box2 width, box2 height}...
 */
-int[][] boxes = {    {15,  40,  60,  70},
-                     {90,  60,  60,  70},
-                     {160,  70,  60,  70},
-                     {230,  40,  60,  70}
+int[][] boxes = {    {0,  40,  80,  100},
+                     {80,  50,  80,  100},
+                     {160,  60,  80,  100},
+                     {240,  40,  80,  100}
                  };
 int[] lastState = {0, 0, 0, 0};
 int[] activated = {0, 0, 0, 0};
