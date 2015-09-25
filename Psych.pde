@@ -43,7 +43,7 @@ int[][] boxes = {    {15,  40,  60,  70},
                      {160,  70,  60,  70},
                      {230,  40,  60,  70}
                  };
-int[] lastState = {0, 0, 0, 0}
+int[] lastState = {0, 0, 0, 0};
 int[] activated = {0, 0, 0, 0};
 Rectangle[] faces;
 
@@ -135,7 +135,7 @@ void drawBoxes(){
 
 void pickClip(int layer, int clip){
   println("Start pickClip");
-  myMessage.setAddrPattern("/layer" + layer + "/clip" + clip + "/connect");
+  myMessage.setAddrPattern("/layer" + layer + "/select");
   myMessage.add(1);
   myBundle.add(myMessage);
   oscP5.send(myBundle, myRemoteLocation);
